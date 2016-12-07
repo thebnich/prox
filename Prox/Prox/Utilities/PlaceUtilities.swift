@@ -59,12 +59,14 @@ struct PlaceUtilities {
         return result.successResult()
     }
 
-    static func filterPlacesForCarousel(_ places: [Place]) -> [Place] {
+    static func filterPlacesForCarousel(_ places: [Place], forLocation location: CLLocation) -> [Place] {
         return places.filter { place in
             // always show places if they have events
             guard place.events.isEmpty else { return true }
-            
-            let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids)
+
+            let placeLocation = CLLocation(latitude: place.latLong.latitude, longitude: place.latLong.longitude)
+            let distanceToPlaceInKm = location.distance(from: placeLocation) / 1000 // to Km
+            let shouldShowByCategory = CategoriesUtil.shouldShowPlace(byCategories: place.categories.ids, forDistToPlaceInKm: distanceToPlaceInKm)
             guard shouldShowByCategory else {
                 print("lol filtering out place, \(place.id), by category")
                 return shouldShowByCategory

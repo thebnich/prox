@@ -161,7 +161,7 @@ class PlacesProvider {
     * all the places that we need to show to the user.
     **/
     private func displayPlaces(places: [Place], forLocation location: CLLocation) {
-        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places)
+        let filteredPlaces = PlaceUtilities.filterPlacesForCarousel(places, forLocation: location)
         return PlaceUtilities.sort(places: filteredPlaces, byTravelTimeFromLocation: location, ascending: true, completion: { sortedPlaces in
             DispatchQueue.main.async {
                 self.delegate?.placesProvider(self, didReceivePlaces: sortedPlaces)

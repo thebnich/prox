@@ -38,6 +38,9 @@ class RemoteConfigKeys {
     // This is measured in kilometers.
     public static let searchRadiusInKm = RemoteConfigRadius(key: "search_radius_in_km", defaultValue: 1.0)
 
+    // The greatest absolute distance for which we'll show restaurants.
+    public static let maxRestaurantKm = RemoteConfigDouble(key: "max_restaurant_km", defaultValue: 1.0)
+
     // The minimum number of minutes walking to the venue to be considered at the venue.at
     // This is measured in minutes.
     public static let youAreHereWalkingTimeMins = RemoteConfigInt(key: "you_are_here_walking_time_mins", defaultValue: 1)

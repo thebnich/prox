@@ -9,7 +9,26 @@ struct CategoriesUtil {
     private static let AllCategoriesPath = "Data.bundle/yelp_categories_v3"
     private static let AllCategoriesExt = "json"
 
-    static func shouldShowPlace<S : Sequence>(byCategories categories: S) -> Bool where S.Iterator.Element == String {
+    private static let maxRestaurantKm = RemoteConfigKeys.maxRestaurantKm.value
+
+    // All categories that are food or restaurant related.
+    static let RestaurantCategoriesToBlock: Set<String> = {
+        let foodCategoriesSeq: [Set<String>] = ["food", "restaurants"].map { foodCat in
+            let descendants = categoryToDescendantsMap[foodCat] ?? Set()
+            return descendants.union([foodCat])
+        }
+        return foodCategoriesSeq.reduce(Set()) { res, foodCategories in
+            res.union(foodCategories)
+        }
+    }()
+
+    static func shouldShowPlace<S : Sequence>(byCategories categories: S, forDistToPlaceInKm distInKm: Double) -> Bool where S.Iterator.Element == String {
+        let isARestaurant = RestaurantCategoriesToBlock.intersection(categories).count > 0
+        let shouldShowByRestaurant = !isARestaurant || distInKm <= maxRestaurantKm
+        guard shouldShowByRestaurant else {
+            return false
+        }
+
         let categorySet = Set(categories)
         let allMatched = categorySet.subtracting(HiddenCategories).isEmpty
         return !allMatched

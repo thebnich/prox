@@ -100,4 +100,19 @@ class CategoriesUtilTests: XCTestCase {
         let actual = CategoriesUtil.getHiddenCategories(forCSV: input)
         XCTAssertEqual(actual, Set([LeafCategory]))
     }
+
+    func testRestaurantCategoriesToBlockSanityCheck() {
+        // Non-exhaustive.
+        let expectedContains = ["food", "restaurants", "yakitori", "italian", "hotpot"]
+        for expected in expectedContains {
+            XCTAssertTrue(CategoriesUtil.RestaurantCategoriesToBlock.contains(expected))
+        }
+
+        let expectedNotContains = ["religiousorgs", "embassy", "graphicdesign", "professional"]
+        for notExpected in expectedNotContains {
+            XCTAssertFalse(CategoriesUtil.RestaurantCategoriesToBlock.contains(notExpected))
+        }
+
+        XCTAssertFalse(CategoriesUtil.RestaurantCategoriesToBlock.contains(NotACategory))
+    }
 }
