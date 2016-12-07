@@ -407,7 +407,7 @@ struct OpenHours {
                     return nil
             }
 
-            if closingTime < openingTime {
+            if closingTime <= openingTime { // Equal if open 24hrs.
                 closingTime += AppConstants.ONE_DAY
             }
             return (openTime: openingTime, closeTime: closingTime)
