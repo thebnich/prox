@@ -76,8 +76,19 @@ struct PlaceUtilities {
                 return shouldShowByRating
             }
 
+            let shouldShowByIsOpen = shouldShowByOpeningHours(place)
+            guard shouldShowByIsOpen else {
+                print("lol filtering out place, \(place.id), by opening hours")
+                return shouldShowByIsOpen
+            }
+
             return true
         }
+    }
+
+    static func shouldShowByOpeningHours(_ place: Place) -> Bool {
+        // If nil, we expect there are no listed hours (e.g. a beach): show the place.
+        return place.hours?.isOpen(atTime: Date()) ?? true
     }
 
     static func shouldShowPlaceByRatingAndReviewCount(_ place: Place) -> Bool {
