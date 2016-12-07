@@ -7,6 +7,8 @@ import CoreLocation
 
 @testable import Prox
 
+private let Gregorian = Calendar.init(identifier: .gregorian)
+
 class PlaceUtilitiesTests: XCTestCase {
         
     override func setUp() {
@@ -67,5 +69,47 @@ class PlaceUtilitiesTests: XCTestCase {
         return Place(id: "id", name: "name", latLong: CLLocationCoordinate2D(latitude: 0, longitude: 0),
                      categories: ([], []), yelpProvider: yelpProvider)
     }
-    
+
+    func testShouldShowPlaceByOpeningHoursIsOpenNow() {
+        let mondayHours = OpenHours(hours: [.monday : [getOpenPeriod(openHour: 10, openMin: 0, closeHour: 20, closeMin: 0)]])
+        let place = Place(id: "", name: "", latLong: getCoordOrigin(), categories: ([], []),
+                          yelpProvider: ReviewProvider(url: ""), hours: mondayHours)
+
+        let currentTime = getMonday(hour: 12, min: 0)
+        XCTAssertTrue(PlaceUtilities.shouldShowByOpeningHours(place, atTime: currentTime))
+    }
+
+    func testShouldShowPlaceByOpeningHoursIsClosedNow() {
+        let mondayHours = OpenHours(hours: [.monday : [getOpenPeriod(openHour: 10, openMin: 0, closeHour: 20, closeMin: 0)]])
+        let place = Place(id: "", name: "", latLong: getCoordOrigin(), categories: ([], []),
+                          yelpProvider: ReviewProvider(url: ""), hours: mondayHours)
+
+        let currentTime = getMonday(hour: 9, min: 0)
+        XCTAssertFalse(PlaceUtilities.shouldShowByOpeningHours(place, atTime: currentTime))
+    }
+
+    func testShouldShowPlaceByOpeningHoursHasNoHours() {
+        let noHours = Place(id: "", name: "", latLong: getCoordOrigin(), categories: ([], []),
+                            yelpProvider: ReviewProvider(url: ""))
+        XCTAssertTrue(PlaceUtilities.shouldShowByOpeningHours(noHours, atTime: getMonday(hour: 0, min: 0)))
+    }
+
+    func testShouldShowPlaceByOpeningHoursHasNoHoursToday() {
+        let noHoursMonday = OpenHours(hours: [.tuesday : [getOpenPeriod(openHour: 10, openMin: 0, closeHour: 20, closeMin: 0)]])
+        let placeNoMonday = Place(id: "", name: "", latLong: getCoordOrigin(), categories: ([], []),
+                                  yelpProvider: ReviewProvider(url: ""), hours: noHoursMonday)
+        XCTAssertFalse(PlaceUtilities.shouldShowByOpeningHours(placeNoMonday, atTime: getMonday(hour: 10, min: 0)))
+    }
+
+    private func getCoordOrigin() -> CLLocationCoordinate2D { return CLLocationCoordinate2D(latitude: 0, longitude: 0) }
+
+    private func getOpenPeriod(openHour: Int, openMin: Int, closeHour: Int, closeMin: Int) -> OpenPeriodDateComponents {
+        let open = DateComponents.init(calendar: Gregorian, hour: openHour, minute: openMin)
+        let close = DateComponents.init(calendar: Gregorian, hour: closeHour, minute: closeMin)
+        return (open, close)
+    }
+
+    private func getMonday(hour: Int, min: Int) -> Date {
+        return DateComponents.init(calendar: Gregorian, year: 2016, month: 12, day: 5, hour: hour, minute: min).date!
+    }
 }
