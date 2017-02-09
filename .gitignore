@@ -25,6 +25,9 @@ xcuserdata/
 Prox/Prox/GoogleService-Info.plist
 Prox/Prox/APIKeys.plist
 
+# Local config
+Prox/Prox/LocalConfig.plist
+
 ## Obj-C/Swift specific
 *.hmap
 *.ipa

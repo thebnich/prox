@@ -11,9 +11,9 @@ your pods spec repo (this can take some time):
 
     pod repo update
 
-Install Pods:
+Run the checkout script:
 
-    pod install
+    ./checkout.sh
 
 Open the workspace. You will need to use the workspace to do development from
 now on. Attempting to compile the .xcodeproj by itself will result in

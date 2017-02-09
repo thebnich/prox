@@ -80,7 +80,9 @@ public struct AppConstants {
             return "production/"
 
         case .Debug:
-            return ""
+            let configPath = Bundle.main.path(forResource: "LocalConfig", ofType: "plist")!
+            let plist = NSDictionary(contentsOfFile: configPath) as! [String: Any]
+            return "\(plist["DebugRoot"]!)/"
         }
     }()
 
